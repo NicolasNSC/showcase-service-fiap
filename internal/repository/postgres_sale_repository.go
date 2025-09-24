@@ -18,7 +18,21 @@ func NewPostgresSaleRepository(db *sql.DB) SaleRepository {
 }
 
 func (r *postgresSaleRepository) Save(ctx context.Context, sale *domain.Sale) error {
-	return nil
+	query := `INSERT INTO sales (id, vehicle_id, brand, model, price, status, created_at, updated_at)
+	          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+
+	_, err := r.db.ExecContext(ctx, query,
+		sale.ID,
+		sale.VehicleID,
+		sale.Brand,
+		sale.Model,
+		sale.Price,
+		sale.Status,
+		sale.CreatedAt,
+		sale.UpdatedAt,
+	)
+
+	return err
 }
 
 func (r *postgresSaleRepository) GetAvailableByPrice(ctx context.Context) ([]*domain.Sale, error) {

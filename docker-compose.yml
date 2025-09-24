@@ -33,3 +33,8 @@ services:
     depends_on:
       db_showcase:
         condition: service_healthy
+
+networks:
+  default:
+    name: tech-challenge-net
+    external: true

@@ -31,7 +31,6 @@ type Sale struct {
 }
 
 func NewSale(vehicleID, brand, model string, price float64) (*Sale, error) {
-	// Validações para uma nova listagem
 	if vehicleID == "" {
 		return nil, errors.New("vehicle_id cannot be empty")
 	}
@@ -42,14 +41,13 @@ func NewSale(vehicleID, brand, model string, price float64) (*Sale, error) {
 		return nil, errors.New("brand and model are required for listing")
 	}
 
-	// Cria a instância com os valores padrão para uma nova listagem
 	return &Sale{
 		ID:        uuid.New().String(),
 		VehicleID: vehicleID,
 		Brand:     brand,
 		Model:     model,
 		Price:     price,
-		Status:    StatusAvailable, // O status inicial é sempre "AVAILABLE"
+		Status:    StatusAvailable,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, nil
