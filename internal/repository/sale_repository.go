@@ -10,4 +10,6 @@ type SaleRepository interface {
 	Save(ctx context.Context, sale *domain.Sale) error
 	GetAvailableByPrice(ctx context.Context) ([]*domain.Sale, error)
 	GetSoldByPrice(ctx context.Context) ([]*domain.Sale, error)
+	GetByVehicleID(ctx context.Context, vehicleID string) (*domain.Sale, error)
+	Update(ctx context.Context, sale *domain.Sale) error
 }

@@ -28,8 +28,15 @@ type OutputCreateListingDTO struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type InputUpdateListingDTO struct {
+	Brand string  `json:"brand"`
+	Model string  `json:"model"`
+	Price float64 `json:"price"`
+}
+
 type SaleUseCaseInterface interface {
 	CreateListing(ctx context.Context, input *InputCreateListingDTO) (*OutputCreateListingDTO, error)
+	UpdateListing(ctx context.Context, vehicleID string, input InputUpdateListingDTO) error
 	ListAvailable(ctx context.Context) ([]*OutputSaleItemDTO, error)
 	ListSold(ctx context.Context) ([]*OutputSaleItemDTO, error)
 }
@@ -100,4 +107,18 @@ func (uc *saleUseCase) ListSold(ctx context.Context) ([]*OutputSaleItemDTO, erro
 	}
 
 	return output, nil
+}
+
+func (uc *saleUseCase) UpdateListing(ctx context.Context, vehicleID string, input InputUpdateListingDTO) error {
+	sale, err := uc.repo.GetByVehicleID(ctx, vehicleID)
+	if err != nil {
+		return err
+	}
+
+	sale.Brand = input.Brand
+	sale.Model = input.Model
+	sale.Price = input.Price
+	sale.UpdatedAt = time.Now()
+
+	return uc.repo.Update(ctx, sale)
 }

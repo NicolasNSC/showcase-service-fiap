@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/NicolasNSC/showcase-service-fiap/internal/usecase"
+	"github.com/go-chi/chi"
 )
 
 type SaleHandler struct {
@@ -58,4 +59,27 @@ func (h *SaleHandler) ListSold(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(output)
+}
+
+func (h *SaleHandler) UpdateListing(w http.ResponseWriter, r *http.Request) {
+	vehicleID := chi.URLParam(r, "vehicle_id")
+	if vehicleID == "" {
+		http.Error(w, "Vehicle ID is required", http.StatusBadRequest)
+		return
+	}
+
+	var input usecase.InputUpdateListingDTO
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	err = h.useCase.UpdateListing(r.Context(), vehicleID, input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

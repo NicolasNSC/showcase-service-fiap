@@ -10,6 +10,8 @@ func SetupRoutes(router *chi.Mux, saleHandler *SaleHandler) {
 	router.Use(middleware.Recoverer)
 
 	router.Post("/listings", saleHandler.CreateListing)
+	router.Put("/listings/vehicle/{vehicle_id}", saleHandler.UpdateListing)
+
 	router.Get("/sales/available", saleHandler.ListAvailable)
 	router.Get("/sales/sold", saleHandler.ListSold)
 }
