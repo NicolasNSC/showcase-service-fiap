@@ -11,6 +11,11 @@ func SetupRoutes(router *chi.Mux, saleHandler *SaleHandler) {
 
 	router.Post("/listings", saleHandler.CreateListing)
 	router.Put("/listings/vehicle/{vehicle_id}", saleHandler.UpdateListing)
+	router.Post("/webhooks/payments", saleHandler.HandlePaymentWebhook)
+	
+	router.Route("/sales/{id}", func(r chi.Router) {
+		r.Post("/purchase", saleHandler.Purchase)
+	})
 
 	router.Get("/sales/available", saleHandler.ListAvailable)
 	router.Get("/sales/sold", saleHandler.ListSold)
