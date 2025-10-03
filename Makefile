@@ -1,10 +1,10 @@
 all: build run
 
 build: 
-	go build ./cmd/showcase-service-fiap
+	go build -o build/bin/showcase-service-fiap ./cmd/showcase-service-fiap 
 
 run:
-	./showcase-service-fiap
+	./build/bin/showcase-service-fiap
 
 test: 
 	go test -covermode=atomic -coverprofile=coverage.out `go list ./... | grep -v mocks | grep -v cmd | grep -v testdata`
@@ -16,7 +16,7 @@ gen:
 	go generate ./...
 
 swagger:
-	swag init -g cmd/showcase-service-fiap/main.go
+	swag init -g cmd/showcase-service-fiap/main.go -o ./docs --parseDependency --parseInternal
 
 docker-up:
 	docker-compose up -d --build
