@@ -1,0 +1,252 @@
+basePath: /
+definitions:
+  dto.InputCreateListingDTO:
+    properties:
+      brand:
+        type: string
+      model:
+        type: string
+      price:
+        type: number
+      vehicle_id:
+        type: string
+    type: object
+  dto.InputPurchaseDTO:
+    properties:
+      buyer_cpf:
+        type: string
+    type: object
+  dto.InputUpdateListingDTO:
+    properties:
+      brand:
+        type: string
+      model:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.InputWebhookDTO:
+    properties:
+      payment_id:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.OutputCreateListingDTO:
+    properties:
+      created_at:
+        type: string
+      sale_id:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.OutputPurchaseDTO:
+    properties:
+      payment_id:
+        type: string
+    type: object
+  dto.OutputSaleItemDTO:
+    properties:
+      brand:
+        type: string
+      model:
+        type: string
+      price:
+        type: number
+      sale_id:
+        type: string
+      vehicle_id:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Microservice for managing vehicle sales, listings, and payment webhooks.
+  title: Showcase Service FIAP
+  version: "1.0"
+paths:
+  /listings:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new sale listing when notified by the catalog-service.
+        This is an internal endpoint.
+      parameters:
+      - description: Listing Data
+        in: body
+        name: listing
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InputCreateListingDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.OutputCreateListingDTO'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new sale listing
+      tags:
+      - Internal
+  /listings/vehicle/{vehicle_id}:
+    put:
+      consumes:
+      - application/json
+      description: Updates a sale listing's data when notified by the catalog-service.
+        This is an internal endpoint.
+      parameters:
+      - description: Vehicle ID
+        in: path
+        name: vehicle_id
+        required: true
+        type: string
+      - description: Listing Data to Update
+        in: body
+        name: listing
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InputUpdateListingDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Listing not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a sale listing
+      tags:
+      - Internal
+  /sales/{id}/purchase:
+    post:
+      consumes:
+      - application/json
+      description: Initiates the purchase process for a specific sale listing.
+      parameters:
+      - description: Sale ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Buyer's CPF
+        in: body
+        name: purchase
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InputPurchaseDTO'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dto.OutputPurchaseDTO'
+        "400":
+          description: Invalid request body or ID
+          schema:
+            type: string
+        "404":
+          description: Sale not found
+          schema:
+            type: string
+        "409":
+          description: Sale is not available for purchase
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Purchase a vehicle
+      tags:
+      - Sales
+  /sales/available:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all vehicles available for sale, sorted by price.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.OutputSaleItemDTO'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: List available vehicles
+      tags:
+      - Sales
+  /sales/sold:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all vehicles that have been sold, sorted by price.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.OutputSaleItemDTO'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: List sold vehicles
+      tags:
+      - Sales
+  /webhooks/payments:
+    post:
+      consumes:
+      - application/json
+      description: Receives payment status notifications from an external payment
+        gateway.
+      parameters:
+      - description: Payment Notification Payload
+        in: body
+        name: notification
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InputWebhookDTO'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Failed to process webhook
+          schema:
+            type: string
+      summary: Handle a payment webhook
+      tags:
+      - Webhooks
+swagger: "2.0"

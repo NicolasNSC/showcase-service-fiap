@@ -16,6 +16,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title           Showcase Service FIAP
+// @version         1.0
+// @description     Microservice for managing vehicle sales, listings, and payment webhooks.
+
+// @host      localhost:8081
+// @BasePath  /
 func main() {
 	loadConfig()
 	db := setupDatabase()

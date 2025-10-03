@@ -15,6 +15,9 @@ cov: test
 gen: 
 	go generate ./...
 
+swagger:
+	swag init -g cmd/showcase-service-fiap/main.go
+
 docker-up:
 	docker-compose up -d --build
 
