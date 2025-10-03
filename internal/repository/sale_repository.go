@@ -6,6 +6,7 @@ import (
 	"github.com/NicolasNSC/showcase-service-fiap/internal/domain"
 )
 
+//go:generate mockgen -source=sale_repository.go -destination=./mocks/sale_repository_mock.go -package=mocks
 type SaleRepository interface {
 	Save(ctx context.Context, sale *domain.Sale) error
 	Update(ctx context.Context, sale *domain.Sale) error
